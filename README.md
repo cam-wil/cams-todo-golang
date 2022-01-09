@@ -1,25 +1,29 @@
 # cams-todo-golang WIP
 
 ## core objectives
-- [ ] first - store todos in slice
+- [x] first - store todos in slice
 - [ ] second - store todos in mysql database
-- [ ] CRUD todos
 - [ ] simple html interface 
+- [ ] add error handling
 ---
 ---
 ### store todos in slice
 [initial reference](https://tutorialedge.net/golang/creating-restful-api-with-golang/)
-- [ ] store and manipulate in slice
+- [x] create todo in slice
+- [x] update todo in slice
+- [x] complete todo in slice
+- [x] remove todo in slice
+
 ### store todos in mysql database
 - [ ] basic connection to db
 - [ ] basic query
 
 ### CRUD todos
-- [ ] create todo
-- [ ] update todo
-- [ ] complete todo
-- [ ] remove todo
+- [x] create todo in slice
+- [x] update todo in slice
+- [x] complete todo in slice
+- [x] remove todo in slice
 
 ### simple html interface
 - [ ] basic html layout
-- [ ] consider using ajax or something else for connections 
+- [ ] ?consider using ajax or something else for connections 

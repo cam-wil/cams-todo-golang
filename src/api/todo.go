@@ -32,7 +32,7 @@ func deleteTodo(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateTodo(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("got UPDATE")
+	fmt.Println("got PUT")
 	vars := mux.Vars(r)
 	id := vars["Id"]
 
@@ -88,7 +88,7 @@ func handleRequests() {
 	router.HandleFunc("/todos", returnAll)                         // return all todos
 	router.HandleFunc("/todo", createTodo).Methods("POST")         // return all todos
 	router.HandleFunc("/todos/{Id}", deleteTodo).Methods("DELETE") // delete specific todo
-	router.HandleFunc("/todos/{Id}", updateTodo).Methods("UPDATE") // delete specific todo
+	router.HandleFunc("/todos/{Id}", updateTodo).Methods("PUT")    // delete specific todo
 	router.HandleFunc("/todos/{Id}", returnOne)                    // return specific todo based on Id
 	log.Fatal(http.ListenAndServe(":10000", router))               // start server
 }
@@ -100,4 +100,4 @@ func main() {
 
 // curl -i -X POST -H "Content-Type: application/json" -d '{"Id" : "3", "Name" : "added todo", "Content" : "this was added with a POST request", "Complete" : false}' http://127.0.0.1:10000/todo
 // curl -i -X DELETE http://127.0.0.1:10000/todos/2
-// curl -i -X UPDATE -H "Content-Type: application/json" -d '{"Id" : "1", "Name" : "updated todo", "Content" : "this was updated with a UPDATE", "Complete" : false}' http://127.0.0.1:10000/todos/1
+// curl -i -X UPDATE -H "Content-Type: application/json" -d '{"Id" : "1", "Name" : "updated todo", "Content" : "this was updated with a PUT", "Complete" : false}' http://127.0.0.1:10000/todos/1
