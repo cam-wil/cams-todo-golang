@@ -1,4 +1,4 @@
-# cams-todo-golang
+# cams-todo-golang WIP
 
 ## core objectives
 - [ ] first - store todos in slice
