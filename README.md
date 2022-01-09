@@ -1,10 +1,14 @@
 # cams-todo-golang
 
 ## core objectives
-- [ ] store todos in mysql database
+- [ ] first - store todos in slice
+- [ ] second - store todos in mysql database
 - [ ] CRUD todos
 - [ ] simple html interface 
-
+---
+---
+### store todos in slice
+- [ ] store and manipulate in slice
 ### store todos in mysql database
 - [ ] basic connection to db
 - [ ] basic query
