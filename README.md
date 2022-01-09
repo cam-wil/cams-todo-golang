@@ -16,14 +16,15 @@
 
 ### store todos in mysql database
 - [ ] basic connection to db
-- [ ] basic query
+- [ ] create todo in db
+- [ ] update todo in db
+- [ ] complete todo in db
+- [ ] remove todo in db
 
-### CRUD todos
-- [x] create todo in slice
-- [x] update todo in slice
-- [x] complete todo in slice
-- [x] remove todo in slice
 
 ### simple html interface
 - [ ] basic html layout
 - [ ] ?consider using ajax or something else for connections 
+
+### add error handling
+- [ ] error handling
