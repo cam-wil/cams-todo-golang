@@ -8,6 +8,7 @@
 ---
 ---
 ### store todos in slice
+[initial reference](https://tutorialedge.net/golang/creating-restful-api-with-golang/)
 - [ ] store and manipulate in slice
 ### store todos in mysql database
 - [ ] basic connection to db
