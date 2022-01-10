@@ -9,13 +9,17 @@
 ---
 ### store todos in slice
 [initial reference](https://tutorialedge.net/golang/creating-restful-api-with-golang/)
+- [x] return one in slice
+- [x] return all in slice
 - [x] create todo in slice
 - [x] update todo in slice
 - [x] complete todo in slice
 - [x] remove todo in slice
 
 ### store todos in mysql database
-- [ ] basic connection to db
+- [x] basic connection to db
+- [x] return one in db
+- [x] return all in db
 - [ ] create todo in db
 - [ ] update todo in db
 - [ ] complete todo in db
