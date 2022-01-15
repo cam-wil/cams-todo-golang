@@ -157,7 +157,6 @@ func handleRequests() {
 	router.HandleFunc("/todos", returnAll)                         // return all todos
 	router.HandleFunc("/todo", createTodo).Methods("POST")         // create todo
 	router.HandleFunc("/todos/{Id}", deleteTodo).Methods("DELETE") // delete specific todo
-	router.HandleFunc("/todos/d/{Id}", deleteTodo).Methods("POST") // delete specific todo
 	router.HandleFunc("/todos/{Id}", updateTodo).Methods("PUT")    // update specific todo
 	router.HandleFunc("/todos/{Id}", returnOne)                    // return specific todo based on Id
 	log.Fatal(http.ListenAndServe(":10000", router))               // start server

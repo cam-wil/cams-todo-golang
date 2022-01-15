@@ -2,8 +2,7 @@
 
 ## core objectives
 - [x] first - store todos in slice
-- [ ] second - store todos in mysql database
-- [ ] simple html interface 
+- [x] second - store todos in mysql database
 - [ ] add error handling
 - [ ] cleanup
 ---
@@ -22,13 +21,7 @@
 - [x] return all in db
 - [x] create todo in db
 - [x] update todo in db
-- [ ] complete todo in db
 - [x] remove todo in db
-
-
-### simple html interface
-- [ ] basic html layout
-- [ ] ?consider using ajax or something else for connections 
 
 ### add error handling
 - [ ] error handling
