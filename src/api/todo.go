@@ -42,7 +42,7 @@ func deleteTodo(w http.ResponseWriter, r *http.Request) {
 	res, e := stmt.Exec(id)
 	printError("unable to execute statement", e)
 
-	// if no rows affected, send 400
+	// if no rows affected, send 404
 	n, _ := res.RowsAffected()
 	if n == 0 {
 		w.WriteHeader(404)
@@ -72,7 +72,7 @@ func updateTodo(w http.ResponseWriter, r *http.Request) {
 	res, e := stmt.Exec(todo.Name, todo.Content, todo.Complete, id)
 	printError("unable to execute statement", e)
 
-	// if now rows affected, throw 400
+	// if now rows affected, throw 404
 	n, _ := res.RowsAffected()
 	if n == 0 {
 		w.WriteHeader(404)
@@ -97,7 +97,7 @@ func createTodo(w http.ResponseWriter, r *http.Request) {
 	res, e := stmt.Exec(todo.Name, todo.Content, todo.Complete)
 	printError("unable to insert to db", e)
 
-	// if now rows affected, throw 400
+	// if now rows affected, throw 404
 	n, _ := res.RowsAffected()
 	if n == 0 {
 		w.WriteHeader(404)
@@ -113,7 +113,7 @@ func returnOne(w http.ResponseWriter, r *http.Request) {
 	tempTodo := ToDo{}
 	db.QueryRow("SELECT * FROM todos WHERE id=?", key).Scan(&tempTodo.Id, &tempTodo.Name, &tempTodo.Content, &tempTodo.Complete)
 
-	// if tempTodo is blank, throw 400 | else return todo as json
+	// if tempTodo is blank, throw 404 | else return todo as json
 	if (tempTodo == ToDo{}) {
 		w.WriteHeader(404)
 	} else {
@@ -136,7 +136,7 @@ func returnAll(w http.ResponseWriter, r *http.Request) {
 		ToDos = append(ToDos, tempTodo)
 	}
 
-	// if slice is empty return 400, else return slice as json
+	// if slice is empty return 404, else return slice as json
 	if len(ToDos) == 0 {
 		w.WriteHeader(404)
 	} else {
