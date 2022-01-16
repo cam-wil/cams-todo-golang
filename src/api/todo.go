@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -23,137 +22,130 @@ type ToDo struct {
 	Complete bool   `json:"complete"`
 }
 
-type Error struct {
-	Error string `json:"error"`
-}
-
-type Success struct {
-	Success int `json:"success"`
-}
-
-func enableCors(w *http.ResponseWriter) {
-	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+func printError(s string, err error) {
+	if e != nil {
+		log.Fatal(s, err)
+	}
 }
 
 func deleteTodo(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
-	fmt.Println("delete")
+	// get id number from end of url
 	vars := mux.Vars(r)
-	id, _ := strconv.Atoi(vars["Id"])
+	id, e := strconv.Atoi(vars["Id"])
+	printError("no valid id provided", e)
 
-	stmt, e := db.Prepare("delete from todos where id=?")
-	if e != nil {
-		log.Fatal("unable to make statement", e)
+	// prepare a statement
+	stmt, e := db.Prepare("DELETE from todos WHERE id=?")
+	printError("unable to make statement", e)
+
+	// execute prepared statement
+	res, e := stmt.Exec(id)
+	printError("unable to execute statement", e)
+
+	// if no rows affected, send 400
+	n, _ := res.RowsAffected()
+	if n == 0 {
+		w.WriteHeader(400)
 	}
-	_, e = stmt.Exec(id)
-	if e != nil {
-		log.Fatal("unable to remove from db", e)
-	}
-
-	var success Success
-	success.Success = 1
-	//json.NewEncoder(w).Encode(success)
-
 }
 
 func updateTodo(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
+	// get id number from end of url
 	vars := mux.Vars(r)
-	id, _ := strconv.Atoi(vars["Id"])
+	id, e := strconv.Atoi(vars["Id"])
+	printError("no valid id provided", e)
 
+	// get json from body
 	requestBody, e := ioutil.ReadAll(r.Body)
-	if e != nil {
-		log.Fatal("no valid json available", e)
-	}
-	var todo ToDo
-	json.Unmarshal(requestBody, &todo)
+	printError("no valid json available", e)
 
-	stmt, e := db.Prepare("update todos set Name=?, Content=?, Complete=? where id=?")
-	if e != nil {
-		log.Fatal("unable to make statement", e)
-	}
-	_, e = stmt.Exec(todo.Name, todo.Content, todo.Complete, id)
-	if e != nil {
-		log.Fatal("unable to update", e)
-	}
+	// turn json into ToDo struct
+	todo := ToDo{}
+	e = json.Unmarshal(requestBody, &todo)
+	printError("cannot unmarshal", e)
 
-	var success Success
-	success.Success = 1
-	json.NewEncoder(w).Encode(success)
+	// create statement for update
+	stmt, e := db.Prepare("UPDATE todos set Name=?, Content=?, Complete=? WHERE id=?")
+	printError("unable to make statement", e)
+
+	// execute statement
+	res, e := stmt.Exec(todo.Name, todo.Content, todo.Complete, id)
+	printError("unable to execute statement", e)
+
+	// if now rows affected, throw 400
+	n, _ := res.RowsAffected()
+	if n == 0 {
+		w.WriteHeader(400)
+	}
 }
 
 func createTodo(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
-
+	// get json from body
 	requestBody, e := ioutil.ReadAll(r.Body)
-	if e != nil {
-		log.Fatal("no valid json available", e)
-	}
-	fmt.Println(string(requestBody))
+	printError("no valid json available", e)
+
+	// unmarshal json to ToDo struct
 	todo := ToDo{}
-	_ = json.Unmarshal([]byte(requestBody), &todo)
-	fmt.Printf("%+v\n", todo)
-	stmt, e := db.Prepare("insert into todos(Name, Content, Complete) values (?, ?, ?)")
-	if e != nil {
-		log.Fatal("unable to make statement", e)
+	e = json.Unmarshal([]byte(requestBody), &todo)
+	printError("error unmarshaling to struct", e)
+
+	// prepare a statement
+	stmt, e := db.Prepare("INSERT into todos(Name, Content, Complete) VALUES (?, ?, ?)")
+	printError("unable to execute statement", e)
+
+	// execute statement
+	res, e := stmt.Exec(todo.Name, todo.Content, todo.Complete)
+	printError("unable to insert to db", e)
+
+	// if now rows affected, throw 400
+	n, _ := res.RowsAffected()
+	if n == 0 {
+		w.WriteHeader(400)
 	}
-	_, e = stmt.Exec(todo.Name, todo.Content, todo.Complete)
-	if e != nil {
-		log.Fatal("unable to insert to db", e)
-	}
-
-	var success Success
-	success.Success = 1
-	json.NewEncoder(w).Encode(success)
-}
-
-func returnAll(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
-	var ToDos []ToDo
-
-	results, e := db.Query("select * from todos")
-	if e != nil {
-		log.Fatal("error fetching from db", e)
-	}
-
-	for results.Next() {
-		var tempTodo ToDo
-		e = results.Scan(&tempTodo.Id, &tempTodo.Name, &tempTodo.Content, &tempTodo.Complete)
-
-		if e != nil {
-			log.Fatal("unable to parse todo", e)
-		}
-
-		ToDos = append(ToDos, tempTodo)
-	}
-
-	json.NewEncoder(w).Encode(ToDos)
 }
 
 func returnOne(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
+	// get int for id
 	vars := mux.Vars(r)
 	key, _ := strconv.Atoi(vars["Id"])
 
-	var tempTodo ToDo
+	// query db for specific id, scan to tempTodo
+	tempTodo := ToDo{}
+	db.QueryRow("SELECT * FROM todos WHERE id=?", key).Scan(&tempTodo.Id, &tempTodo.Name, &tempTodo.Content, &tempTodo.Complete)
 
-	db.QueryRow("select * from todos where id=?", key).Scan(&tempTodo.Id, &tempTodo.Name, &tempTodo.Content, &tempTodo.Complete)
-	if tempTodo.Id == 0 {
-		var err Error
-		err.Error = "cannot find todo with id of " + strconv.Itoa(key)
-		json.NewEncoder(w).Encode(err)
+	// if tempTodo is blank, throw 400 | else return todo as json
+	if (tempTodo == ToDo{}) {
+		w.WriteHeader(400)
 	} else {
 		json.NewEncoder(w).Encode(tempTodo)
 	}
 }
 
-func homePage(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(404)
+func returnAll(w http.ResponseWriter, r *http.Request) {
+	ToDos := []ToDo{}
+
+	// query database for all todos
+	results, e := db.Query("select * from todos")
+	printError("error fetching from db", e)
+
+	// iterate over all results, scan to ToDo slice
+	for results.Next() {
+		tempTodo := ToDo{}
+		e = results.Scan(&tempTodo.Id, &tempTodo.Name, &tempTodo.Content, &tempTodo.Complete)
+		printError("unable to parse todo", e)
+		ToDos = append(ToDos, tempTodo)
+	}
+
+	// if slice is empty return 400, else return slice as json
+	if len(ToDos) == 0 {
+		w.WriteHeader(400)
+	} else {
+		json.NewEncoder(w).Encode(ToDos)
+	}
 }
 
 func handleRequests() {
 	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc("/", homePage)                               // home page
 	router.HandleFunc("/todos", returnAll)                         // return all todos
 	router.HandleFunc("/todo", createTodo).Methods("POST")         // create todo
 	router.HandleFunc("/todos/{Id}", deleteTodo).Methods("DELETE") // delete specific todo
@@ -164,12 +156,10 @@ func handleRequests() {
 
 func main() {
 	db, e = sql.Open("mysql", "root:password@tcp(127.0.0.1:3306)/todo")
-	if e != nil {
-		log.Fatal("unable to open db ", e)
-	}
+	printError("unable to open db ", e)
+
 	defer db.Close()
 	handleRequests()
-
 }
 
 // docker run -d --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=password -ti mysql:latest
