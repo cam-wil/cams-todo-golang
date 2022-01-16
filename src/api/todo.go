@@ -16,7 +16,7 @@ var db *sql.DB
 var e error
 
 type ToDo struct {
-	Id       int    `json:"id"`
+	Id       int    `json:"id,omitempty"`
 	Name     string `json:"name"`
 	Content  string `json:"content"`
 	Complete bool   `json:"complete"`
@@ -164,6 +164,6 @@ func main() {
 
 // docker run -d --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=password -ti mysql:latest
 // mysql -h localhost -P 3306 --protocol=tcp -u root -p
-// curl -i -X POST -H "Content-Type: application/json" -d '{"Id" : "3", "Name" : "added todo", "Content" : "this was added with a POST request", "Complete" : false}' http://127.0.0.1:10000/todo
+// curl -i -X POST -H "Content-Type: application/json" -d '{"name" : "added todo", "content" : "this was added with a POST request", "complete" : false}' http://127.0.0.1:10000/todo
 // curl -i -X DELETE http://127.0.0.1:10000/todos/2
-// curl -i -X PUT -H "Content-Type: application/json" -d '{"Id" : "1", "Name" : "updated todo", "Content" : "this was updated with a PUT", "Complete" : false}' http://127.0.0.1:10000/todos/1
+// curl -i -X PUT -H "Content-Type: application/json" -d '{"name" : "updated todo", "content" : "this was updated with a PUT", "complete" : false}' http://127.0.0.1:10000/todos/1
