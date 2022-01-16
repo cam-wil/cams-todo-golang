@@ -45,7 +45,7 @@ func deleteTodo(w http.ResponseWriter, r *http.Request) {
 	// if no rows affected, send 400
 	n, _ := res.RowsAffected()
 	if n == 0 {
-		w.WriteHeader(400)
+		w.WriteHeader(404)
 	}
 }
 
@@ -75,7 +75,7 @@ func updateTodo(w http.ResponseWriter, r *http.Request) {
 	// if now rows affected, throw 400
 	n, _ := res.RowsAffected()
 	if n == 0 {
-		w.WriteHeader(400)
+		w.WriteHeader(404)
 	}
 }
 
@@ -100,7 +100,7 @@ func createTodo(w http.ResponseWriter, r *http.Request) {
 	// if now rows affected, throw 400
 	n, _ := res.RowsAffected()
 	if n == 0 {
-		w.WriteHeader(400)
+		w.WriteHeader(404)
 	}
 }
 
@@ -115,7 +115,7 @@ func returnOne(w http.ResponseWriter, r *http.Request) {
 
 	// if tempTodo is blank, throw 400 | else return todo as json
 	if (tempTodo == ToDo{}) {
-		w.WriteHeader(400)
+		w.WriteHeader(404)
 	} else {
 		json.NewEncoder(w).Encode(tempTodo)
 	}
@@ -138,7 +138,7 @@ func returnAll(w http.ResponseWriter, r *http.Request) {
 
 	// if slice is empty return 400, else return slice as json
 	if len(ToDos) == 0 {
-		w.WriteHeader(400)
+		w.WriteHeader(404)
 	} else {
 		json.NewEncoder(w).Encode(ToDos)
 	}
