@@ -3,7 +3,8 @@
 ## core objectives
 - [x] first - store todos in slice
 - [x] second - store todos in mysql database
-- [ ] add error handling
+- [x] add error handling
+- [ ] switch SQL driver to gorm
 - [ ] cleanup
 ---
 ---
@@ -24,7 +25,10 @@
 - [x] remove todo in db
 
 ### add error handling
-- [ ] error handling
+- [x] error handling - somewhat
+
+### switch SQL driver to gorm
+- [ ] gorm
 
 ### cleanup
 - [ ] cleanup
